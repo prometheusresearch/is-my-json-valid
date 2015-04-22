@@ -231,6 +231,34 @@ tape('custom format function', function(t) {
   t.end()
 })
 
+tape('custom format function with custom error reporting', function(t) {
+  var validate = validator({
+    type: 'object',
+    properties: {
+      foo: {
+        type: 'string',
+        format: 'as'
+      }
+    }
+  }, {
+    formats: {
+      as:function(s) {
+        if (s !== 'as') {
+          return 'custom error message'
+        }
+        return true;
+      }
+    }
+  })
+
+  t.notOk(validate({foo:''}), 'should be "as"')
+  t.ok(validate.errors);
+  t.ok(validate.errors[0]);
+  t.ok(validate.errors[0].field === 'data.foo');
+  t.ok(validate.errors[0].message === 'custom error message');
+  t.end()
+})
+
 tape('do not mutate schema', function(t) {
   var sch = {
     items: [
