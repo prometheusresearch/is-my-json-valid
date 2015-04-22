@@ -259,6 +259,31 @@ tape('custom format function with custom error reporting', function(t) {
   t.end()
 })
 
+tape('custom format function accept current node as second argument', function(t) {
+  var touchedNodes = [];
+  var schema = {
+    type: 'object',
+    properties: {
+      foo: {
+        type: 'string',
+        format: 'as'
+      }
+    }
+  };
+  var validate = validator(schema, {
+    formats: {
+      as:function(s, n) {
+        touchedNodes.push(n);
+        return s === 'as';
+      }
+    }
+  })
+
+  t.ok(validate({foo:'as'}), 'as')
+  t.ok(touchedNodes[0] === schema.properties.foo);
+  t.end()
+})
+
 tape('do not mutate schema', function(t) {
   var sch = {
     items: [

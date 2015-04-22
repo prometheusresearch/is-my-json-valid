@@ -117,6 +117,9 @@ var compile = function(schema, cache, root, reporter, opts) {
     var type = node.type
     var tuple = false
 
+    var nodeSym = gensym('node')
+    scope[nodeSym] = node;
+
     if (Array.isArray(node.items)) { // tuple type
       properties = {}
       node.items.forEach(function(item, i) {
@@ -195,7 +198,7 @@ var compile = function(schema, cache, root, reporter, opts) {
 
       if (typeof scope[n] === 'function') {
         var r = gensym('result')
-        validate('var %s = %s(%s)', r, n, name)
+        validate('var %s = %s(%s, %s)', r, n, name, nodeSym)
         validate('if (!%s) {', r)
         error('must be '+node.format+' format')
         validate('} else if (typeof %s === "string") {', r)
