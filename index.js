@@ -191,10 +191,14 @@ var compile = function(schema, cache, root, reporter, opts) {
       }   
     }
 
-    if (node.format && fmts[node.format]) {
+    if (node.format && (fmts[node.format] || typeof node.format === 'function')) {
       if (type !== 'string' && formats[node.format]) validate('if (%s) {', types.string(name))
       var n = gensym('format')
-      scope[n] = fmts[node.format]
+      if (typeof node.format === 'function') {
+        scope[n] = node.format;
+      } else {
+        scope[n] = fmts[node.format]
+      }
 
       if (typeof scope[n] === 'function') {
         var r = gensym('result')

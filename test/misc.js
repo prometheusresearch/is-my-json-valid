@@ -284,6 +284,23 @@ tape('custom format function accept current node as second argument', function(t
   t.end()
 })
 
+tape('custom format function can be specified inline', function(t) {
+  var validate = validator({
+    type: 'object',
+    properties: {
+      foo: {
+        type: 'string',
+        format: function(s) {
+          return s === 'as';
+        }
+      }
+    }
+  });
+  t.notOk(validate({foo:'s'}));
+  t.ok(validate({foo:'as'}));
+  t.end()
+})
+
 tape('do not mutate schema', function(t) {
   var sch = {
     items: [
