@@ -193,6 +193,107 @@ tape('exclusiveMinimum/exclusiveMaximum', function(t) {
   t.end()
 })
 
+tape('allow to validate undefined as object', function(t) {
+  var validate = validator({
+    type: 'object',
+    properties: {
+      foo: {
+        type: 'string',
+      }
+    },
+    required: ['foo']
+  }, {undefinedAsObject: true});
+
+  t.notOk(validate(undefined));
+  console.log(validate.errors);
+  t.ok(validate.errors[0].field === 'data.foo');
+  t.ok(validate.errors[0].message === 'is required');
+  t.end();
+});
+
+tape('allow to validate null as object', function(t) {
+  var validate = validator({
+    type: 'object',
+    properties: {
+      foo: {
+        type: 'string',
+      }
+    },
+    required: ['foo']
+  }, {nullAsObject: true});
+
+  t.notOk(validate(null));
+  console.log(validate.errors);
+  t.ok(validate.errors[0].field === 'data.foo');
+  t.ok(validate.errors[0].message === 'is required');
+  t.end();
+});
+
+tape('allow to validate null and undefined as objects', function(t) {
+  var validate = validator({
+    type: 'object',
+    properties: {
+      foo: {
+        type: 'string',
+      }
+    },
+    required: ['foo']
+  }, {nullAsObject: true, undefinedAsObject: true});
+
+  t.notOk(validate(null));
+  console.log(validate.errors);
+  t.ok(validate.errors[0].field === 'data.foo');
+  t.ok(validate.errors[0].message === 'is required');
+
+  t.notOk(validate(undefined));
+  console.log(validate.errors);
+  t.ok(validate.errors[0].field === 'data.foo');
+  t.ok(validate.errors[0].message === 'is required');
+
+  t.end();
+});
+
+tape('allow to validate undefined as array', function(t) {
+  var validate = validator({
+    type: 'array',
+    minItems: 1
+  }, {undefinedAsArray: true});
+
+  t.notOk(validate(undefined));
+  t.ok(validate.errors[0].field === 'data');
+  t.ok(validate.errors[0].message === 'has less items than allowed');
+  t.end();
+});
+
+tape('allow to validate null as object', function(t) {
+  var validate = validator({
+    type: 'array',
+    minItems: 1
+  }, {nullAsArray: true});
+
+  t.notOk(validate(null));
+  t.ok(validate.errors[0].field === 'data');
+  t.ok(validate.errors[0].message === 'has less items than allowed');
+  t.end();
+});
+
+tape('allow to validate null and undefined as objects', function(t) {
+  var validate = validator({
+    type: 'array',
+    minItems: 1
+  }, {nullAsArray: true, undefinedAsArray: true});
+
+  t.notOk(validate(null));
+  t.ok(validate.errors[0].field === 'data');
+  t.ok(validate.errors[0].message === 'has less items than allowed');
+
+  t.notOk(validate(undefined));
+  t.ok(validate.errors[0].field === 'data');
+  t.ok(validate.errors[0].message === 'has less items than allowed');
+
+  t.end();
+});
+
 tape('custom format', function(t) {
   var validate = validator({
     type: 'object',
