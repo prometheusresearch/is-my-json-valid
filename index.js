@@ -29,10 +29,21 @@ var get = function(obj, additionalSchemas, ptr) {
   }
 }
 
+var splitName = /[\[\]]/;
+
 var formatName = function(field) {
-  var pattern = /\[[^\[\]"]+\]/
-  while (pattern.test(field)) field = field.replace(pattern, '.*')
-  return field
+  field = field.replace(/\[/g, '[\u0001').split(splitName);
+  var formatted = [];
+  for (var i = 0; i < field.length; i++) {
+    var part = field[i];
+    if (part[0] === '\u0001') {
+      formatted.push(JSON.stringify('.'));
+      formatted.push(part.slice(1));
+    } else {
+      formatted.push(JSON.stringify(part));
+    }
+  }
+  return formatted.join('+');
 }
 
 var types = {}
@@ -142,9 +153,9 @@ var compile = function(schema, cache, root, reporter, opts) {
       if (reporter === true) {
         validate('if (validate.errors === null) validate.errors = []')
         if (verbose) {
-          validate('validate.errors.push({field:%s,message:%s,value:%s})', JSON.stringify(formatName(prop || name)), JSON.stringify(msg), value || name)
+          validate('validate.errors.push({field:%s,message:%s,value:%s})', formatName(prop || name), JSON.stringify(msg), value || name)
         } else {
-          validate('validate.errors.push({field:%s,message:%s})', JSON.stringify(formatName(prop || name)), JSON.stringify(msg))
+          validate('validate.errors.push({field:%s,message:%s})', formatName(prop || name), JSON.stringify(msg))
         }
       }
     }
@@ -153,9 +164,9 @@ var compile = function(schema, cache, root, reporter, opts) {
       if (reporter === true) {
         validate('if (validate.errors === null) validate.errors = []')
         if (verbose) {
-          validate('validate.errors.push({field:%s,message:%s,value:%s})', JSON.stringify(formatName(name)), sym, name)
+          validate('validate.errors.push({field:%s,message:%s,value:%s})', formatName(name), sym, name)
         } else {
-          validate('validate.errors.push({field:%s,message:%s})', JSON.stringify(formatName(name)), sym)
+          validate('validate.errors.push({field:%s,message:%s})', formatName(name), sym)
         }
       }
     }

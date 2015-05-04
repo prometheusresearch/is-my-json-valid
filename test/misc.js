@@ -133,6 +133,9 @@ tape('nested array', function(t) {
   t.notOk(validate({}), 'is required')
   t.ok(validate({list:['test']}))
   t.notOk(validate({list:[1]}))
+  t.ok(validate.errors[0].field === 'data.list.0');
+  t.notOk(validate({list:['test', 2]}))
+  t.ok(validate.errors[0].field === 'data.list.1');
   t.end()
 })
 
