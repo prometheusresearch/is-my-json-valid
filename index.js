@@ -144,9 +144,7 @@ var compile = function(schema, cache, root, reporter, opts) {
         if (verbose) {
           validate('validate.errors.push({field:%s,message:%s,value:%s})', JSON.stringify(formatName(prop || name)), JSON.stringify(msg), value || name)
         } else {
-          var n = gensym('error')
-          scope[n] = {field:formatName(prop || name), message:msg}
-          validate('validate.errors.push(%s)', n)
+          validate('validate.errors.push({field:%s,message:%s})', JSON.stringify(formatName(prop || name)), JSON.stringify(msg))
         }
       }
     }
