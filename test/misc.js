@@ -205,7 +205,6 @@ tape('allow to validate undefined as object', function(t) {
   }, {undefinedAsObject: true});
 
   t.notOk(validate(undefined));
-  console.log(validate.errors);
   t.ok(validate.errors[0].field === 'data.foo');
   t.ok(validate.errors[0].message === 'is required');
   t.end();
@@ -223,7 +222,6 @@ tape('allow to validate null as object', function(t) {
   }, {nullAsObject: true});
 
   t.notOk(validate(null));
-  console.log(validate.errors);
   t.ok(validate.errors[0].field === 'data.foo');
   t.ok(validate.errors[0].message === 'is required');
   t.end();
@@ -241,12 +239,10 @@ tape('allow to validate null and undefined as objects', function(t) {
   }, {nullAsObject: true, undefinedAsObject: true});
 
   t.notOk(validate(null));
-  console.log(validate.errors);
   t.ok(validate.errors[0].field === 'data.foo');
   t.ok(validate.errors[0].message === 'is required');
 
   t.notOk(validate(undefined));
-  console.log(validate.errors);
   t.ok(validate.errors[0].field === 'data.foo');
   t.ok(validate.errors[0].message === 'is required');
 
