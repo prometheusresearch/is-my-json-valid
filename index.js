@@ -101,6 +101,7 @@ var compile = function(schema, cache, root, reporter, opts) {
   var verbose = opts ? !!opts.verbose : false;
   var undefinedAsObject = opts ? !!opts.undefinedAsObject : false;
   var nullAsObject = opts ? !!opts.nullAsObject : false;
+  var nullAsUndefined = opts ? !!opts.nullAsUndefined : false;
   var undefinedAsArray = opts ? !!opts.undefinedAsArray : false;
   var nullAsArray = opts ? !!opts.nullAsArray : false;
   var greedy = opts && opts.greedy !== undefined ?
@@ -173,7 +174,11 @@ var compile = function(schema, cache, root, reporter, opts) {
 
     if (node.required === true) {
       indent++
-      validate('if (%s === undefined) {', dataSym)
+      if (nullAsUndefined) {
+        validate('if (%s == undefined) {', dataSym)
+      } else {
+        validate('if (%s === undefined) {', dataSym)
+      }
       error('is required')
       validate('} else {')
     } else {
@@ -195,7 +200,11 @@ var compile = function(schema, cache, root, reporter, opts) {
         }
       } else {
         indent++
-        validate('if (%s !== undefined) {', dataSym)
+        if (nullAsUndefined) {
+          validate('if (%s != undefined) {', dataSym)
+        } else {
+          validate('if (%s !== undefined) {', dataSym)
+        }
       }
     }
 
@@ -256,7 +265,11 @@ var compile = function(schema, cache, root, reporter, opts) {
       }
 
       var checkRequired = function (req) {
-        validate('if (%s === undefined) {', genobj(dataSym, req))
+        if (nullAsUndefined) {
+          validate('if (%s == undefined) {', genobj(dataSym, req))
+        } else {
+          validate('if (%s === undefined) {', genobj(dataSym, req))
+        }
         error('is required', genobj(name, req));
         validate('missing++')
         validate('}')
